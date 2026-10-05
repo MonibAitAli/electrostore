@@ -1,0 +1,70 @@
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  importFileExtension = "ts"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Category {
+  id       Int       @id @default(autoincrement())
+  slug     String    @unique
+  nameFr   String
+  nameAr   String
+  imageUrl String?
+  order    Int       @default(0)
+  products Product[]
+}
+
+model Brand {
+  id       Int       @id @default(autoincrement())
+  slug     String    @unique
+  name     String
+  logoUrl  String?
+  products Product[]
+}
+
+model Product {
+  id            Int       @id @default(autoincrement())
+  sku           String    @unique
+  slug          String    @unique
+  nameFr        String
+  nameAr        String
+  brandId       Int
+  brand         Brand     @relation(fields: [brandId], references: [id])
+  categoryId    Int
+  category      Category  @relation(fields: [categoryId], references: [id])
+  price         Int
+  promoPrice    Int?
+  stock         Int       @default(0)
+  imageUrl      String
+  galleryJson   String?
+  descriptionFr String?
+  descriptionAr String?
+  specsJson     String?
+  rating        Float     @default(0)
+  reviewCount   Int       @default(0)
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([categoryId])
+  @@index([brandId])
+  @@index([isActive])
+}
+
+model Banner {
+  id         Int     @id @default(autoincrement())
+  titleFr    String
+  titleAr    String
+  subtitleFr String?
+  subtitleAr String?
+  imageUrl   String
+  ctaLabelFr String?
+  ctaLabelAr String?
+  ctaHref    String?
+  order      Int     @default(0)
+  isActive   Boolean @default(true)
+}
